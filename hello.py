@@ -144,6 +144,7 @@ class hellosig(pyext._class):
 
 	t = 0.0
 	f = 0.0
+	fn = np.sin
 
 	def bang_3(self):
 		print "SR:",self._samplerate(),"BS:",self._blocksize(),"F:",self.f
@@ -151,6 +152,19 @@ class hellosig(pyext._class):
 	def _dsp(self):
         # if _dsp is present it must return True to enable DSP
 		return pyext._arraysupport()
+
+	def sin_3(self):
+		"""This is a class-local receive function"""
+		self.fn = np.sin
+
+	def noise_3(self):
+		self.fn = lambda x: np.random.random(self._blocksize())
+
+	def square_3(self):
+		self.fn = lambda x: np.ceil(np.sin(x)) * 2 - 1
+
+	def saw_3(self):
+		self.fn = lambda x: 1-np.mod(x,2*np.pi)/(2*np.pi)
 
 	def _signal(self):
 		# not great, since
@@ -160,12 +174,9 @@ class hellosig(pyext._class):
 
 		x = np.linspace(self.t,self.t+d,self._blocksize()+1)[:-1]
 
-		self._outvec(0)[:] = np.sin(x)
-		# self._outvec(0)[:] = np.random.random(self._blocksize())
-		# self._outvec(0)[:] = 1-np.mod(x,2*np.pi)/(2*np.pi)
+		self._outvec(0)[:] = self.fn(x)
 
 		self.t += d
-		# print(np.sin(x))
 
 	def __signal(self):
 		# a bit better since we can change f freely

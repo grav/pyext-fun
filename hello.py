@@ -172,7 +172,7 @@ class hellosig(pyext._class):
 		self.f = self._invec(0)[0]
 		d = self.f*2.0*pi*(self._blocksize()/self._samplerate())
 
-		x = np.linspace(self.t,self.t+d,self._blocksize()+1)[:-1]
+		x = np.linspace(self.t,self.t+d,self._blocksize(),False)
 
 		self._outvec(0)[:] = self.fn(x)
 
